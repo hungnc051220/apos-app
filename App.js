@@ -5,6 +5,7 @@ import SignInScreen from "./screens/SignInScreen";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
 import { useSelector } from "react-redux";
+import RootScreen from "./screens/RootScreen";
 
 const Stack = createStackNavigator();
 
@@ -21,7 +22,7 @@ const RootNavigation = () => {
         {!token ? (
           <Stack.Screen name="Login" component={SignInScreen} />
         ) : (
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Root" component={RootScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

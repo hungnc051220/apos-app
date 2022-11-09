@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
+  FlatList,
   Image,
   ImageBackground,
   Pressable,
@@ -16,28 +17,30 @@ import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
-  const user = useSelector(state => state.auth.user);
-  const [profile, setProfile] = useState({});
+  const user = useSelector((state) => state.auth.user);
+  const [floors, setFloors] = useState({});
 
   useEffect(() => {
-    const getProfile = async () => {
+    const getFloors = async () => {
       try {
-        const response = await axios.get(
-          "https://mseller-dev.azurewebsites.net/api/user/profile",
+        const response = await axios.post(
+          "https://mseller-dev.azurewebsites.net/api/floor/list",
+          {},
           {
             headers: {
-              Authorization: `Bearer ${user?.token}`,
+              authorization: `Bearer ${user?.token}`,
             },
           }
         );
-        setProfile(response.data?.data);
+        setFloors(response.data?.data);
       } catch (error) {
         console.log(error);
       }
     };
 
-    getProfile();
+    getFloors();
   }, []);
+
   return (
     <View className="flex-1">
       <StatusBar translucent backgroundColor="transparent" />
@@ -55,21 +58,24 @@ const HomeScreen = () => {
               className="h-12 w-12 rounded-full mr-2"
             />
             <View className="justify-center">
-              <Text className="text-white">{profile?.fullName}</Text>
-              <Text style={{ fontSize: 10 }} className="text-white">
-                Quản lý
-              </Text>
+              <Text className="text-white">{user?.fullName}</Text>
+              <Text className="text-white text-xs">Quản lý</Text>
             </View>
           </View>
+          <View className="flex-row items-center">
+            <Text className="font-bold text-base text-white">{user?.company.companyName}</Text>
+          </View>
         </View>
-        <View className="flex-1 bg-[#EEEDED] px-6 pt-4">
+        <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
           <View className="bg-white h-14 flex-row justify-between px-6 rounded-lg mb-4">
             <Text className="self-center font-medium text-gray-500">
-              Số bàn trống: <Text className="text-primary">20</Text>
+              Số bàn trống:{" "}
+              <Text className="text-primary">{floors?.tableEmptyCount}</Text>
             </Text>
             <View className="w-[2px] bg-gray-100 h-[90%] my-auto"></View>
             <Text className="self-center font-medium text-gray-500">
-              Đang sử dụng <Text className="text-orange-500">10</Text>
+              Đang sử dụng:{" "}
+              <Text className="text-orange-500">{floors?.tableTotalCount}</Text>
             </Text>
           </View>
 
@@ -78,15 +84,11 @@ const HomeScreen = () => {
               <View>
                 <Text className="mr-6 font-medium text-primary">Tất cả</Text>
               </View>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 1</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
-              <Text className="mr-6 text-gray-500 font-medium">Tầng 2</Text>
+              {floors?.floors?.map((item, index) => (
+                <Text key={index} className="mr-6 text-gray-500 font-medium">
+                  {item.name}
+                </Text>
+              ))}
             </ScrollView>
             <TouchableOpacity className="bg-primary items-center justify-center py-2 px-4 rounded-lg">
               <Text className="text-white">Thêm+</Text>
@@ -95,228 +97,54 @@ const HomeScreen = () => {
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            backgroundColor="#FAF6F3"
-            className="-mx-6 mt-4 py-5 px-6"
+            className="mt-4 -mx-6"
           >
-            <View className="mb-10">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="font-semibold">Tầng 1</Text>
-                <Text className="text-xs">
-                  Còn trống: <Text className="text-primary">02</Text>
-                </Text>
-              </View>
-              <View className="flex-row gap-4">
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
+            {floors?.floors?.map((item) => (
+              <View key={item.id} className="mb-6 bg-[#FAF6F3] py-5">
+                <View className="flex-row justify-between items-center mb-4 px-6">
+                  <Text className="font-semibold">{item.name}</Text>
+                  <Text className="text-xs">
+                    Còn trống:{" "}
+                    <Text className="text-primary">{item.emptyTableTotal}</Text>
+                  </Text>
                 </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View className="mb-10">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="font-semibold">Tầng 1</Text>
-                <Text className="text-xs">
-                  Còn trống: <Text className="text-primary">02</Text>
-                </Text>
-              </View>
-              <View className="flex-row gap-4">
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
+                <View className="flex-row flex-wrap px-4">
+                  {item?.tables.map((item) => (
+                    <View className="h-[108px] w-1/3 p-2">
+                      <View className="flex-1 bg-white items-center rounded-lg overflow-hidden">
+                        <View
+                          className={`items-center py-1 ${
+                            item.status === true ? "bg-[#8E8E8E]" : "bg-primary"
+                          } w-full`}
+                        >
+                          <Text className="text-white">{item.name}</Text>
+                        </View>
+                        <View className="justify-center items-center flex-1">
+                          {item.status === true ? (
+                            <Feather name="clock" size={24} color="#8E8E8E" />
+                          ) : (
+                            <Feather
+                              name="check-circle"
+                              size={24}
+                              color="#2DB894"
+                            />
+                          )}
+                          <Text
+                            className={`mt-2 ${
+                              item.status === true
+                                ? "text-[#8E8E8E]"
+                                : "text-primary"
+                            } font-medium text-xs`}
+                          >
+                            {item.status === true ? "Đang sử dụng" : "Sẵn sàng"}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
                 </View>
               </View>
-            </View>
-
-            <View className="mb-10">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="font-semibold">Tầng 1</Text>
-                <Text className="text-xs">
-                  Còn trống: <Text className="text-primary">02</Text>
-                </Text>
-              </View>
-              <View className="flex-row gap-4">
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View className="mb-10">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="font-semibold">Tầng 1</Text>
-                <Text className="text-xs">
-                  Còn trống: <Text className="text-primary">02</Text>
-                </Text>
-              </View>
-              <View className="flex-row gap-4">
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View className="mb-10">
-              <View className="flex-row justify-between items-center mb-4">
-                <Text className="font-semibold">Tầng 1</Text>
-                <Text className="text-xs">
-                  Còn trống: <Text className="text-primary">02</Text>
-                </Text>
-              </View>
-              <View className="flex-row gap-4">
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1 items-center bg-white h-[100px] rounded-lg overflow-hidden">
-                  <View className="items-center py-1 bg-primary w-full">
-                    <Text className="text-white">BÀN 2</Text>
-                  </View>
-                  <View className="justify-center items-center flex-1">
-                    <Feather name="check-circle" size={16} color="#2DB894" />
-                    <Text className="mt-4 text-primary font-medium text-xs">
-                      Sẵn sàng
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+            ))}
           </ScrollView>
         </View>
       </SafeAreaView>
