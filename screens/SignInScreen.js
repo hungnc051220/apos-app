@@ -8,11 +8,23 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "../features/auth/authSlice";
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = () => {
   const [toggle, setToggle] = useState(false);
+  const [phoneNumber, onChangePhoneNumber] = useState(null);
+  const [password, onChangePassword] = useState(null);
+  const loading = useSelector((state) => state.auth.isLoading);
+
+  const dispatch = useDispatch();
+
+  const handleLogin = () => {
+    dispatch(login({ phoneNumber, password }));
+  };
 
   return (
     <View className="flex-1">
@@ -38,12 +50,14 @@ const SignInScreen = ({ navigation }) => {
         <TextInput
           placeholder="Số điện thoại"
           className="w-full block border border-gray-200 h-12 px-4 mb-4 rounded-lg"
+          onChangeText={onChangePhoneNumber}
         />
         <View className="flex-row w-full border border-gray-200 rounded-lg h-12 items-center px-4">
           <TextInput
             placeholder="Mật khẩu"
             secureTextEntry={toggle ? true : false}
             className="flex-1 mr-2"
+            onChangeText={onChangePassword}
           />
           <Feather
             size={16}
@@ -60,12 +74,14 @@ const SignInScreen = ({ navigation }) => {
         </View>
         <TouchableOpacity
           title="Đăng nhập"
-          className="bg-primary py-4 block w-full rounded-lg"
-          onPress={() => navigation.navigate("Home")}
+          className="bg-primary py-4 block w-full rounded-lg items-center"
+          onPress={handleLogin}
         >
-          <Text className="text-center text-white text-sm font-medium">
-            Đăng nhập
-          </Text>
+          {!loading ? (
+            <Text className="text-white text-sm font-medium">Đăng nhập</Text>
+          ) : (
+            <ActivityIndicator size={20} color="#fff" />
+          )}
         </TouchableOpacity>
         <View className="justify-end items-center flex-1">
           <Text className="text-gray-400">

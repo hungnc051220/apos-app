@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -12,8 +13,31 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
+  const user = useSelector(state => state.auth.user);
+  const [profile, setProfile] = useState({});
+
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const response = await axios.get(
+          "https://mseller-dev.azurewebsites.net/api/user/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+            },
+          }
+        );
+        setProfile(response.data?.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getProfile();
+  }, []);
   return (
     <View className="flex-1">
       <StatusBar translucent backgroundColor="transparent" />
@@ -31,7 +55,7 @@ const HomeScreen = () => {
               className="h-12 w-12 rounded-full mr-2"
             />
             <View className="justify-center">
-              <Text className="text-white">Nguyễn Cảnh Hưng</Text>
+              <Text className="text-white">{profile?.fullName}</Text>
               <Text style={{ fontSize: 10 }} className="text-white">
                 Quản lý
               </Text>
