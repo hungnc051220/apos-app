@@ -73,7 +73,6 @@ const SignInScreen = () => {
           </Text>
         </View>
         <TouchableOpacity
-          title="Đăng nhập"
           className="bg-primary py-4 block w-full rounded-lg items-center"
           onPress={handleLogin}
           disabled={loading}

@@ -15,6 +15,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
+import AddFloor from "../components/AddFloor";
+import HeaderHome from "../components/HeaderHome";
 
 const HomeScreen = () => {
   const user = useSelector((state) => state.auth.user);
@@ -50,22 +52,7 @@ const HomeScreen = () => {
         className="absolute inset-0"
       />
       <SafeAreaView className="flex-1">
-        <View className="flex-row">
-          <View className="flex-row pt-3 px-6 pb-4">
-            <Image
-              source={require("../assets/icon.png")}
-              resizeMode="contain"
-              className="h-12 w-12 rounded-full mr-2"
-            />
-            <View className="justify-center">
-              <Text className="text-white">{user?.fullName}</Text>
-              <Text className="text-white text-xs">Quản lý</Text>
-            </View>
-          </View>
-          <View className="flex-row items-center">
-            <Text className="font-bold text-base text-white">{user?.company.companyName}</Text>
-          </View>
-        </View>
+        <HeaderHome />
         <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
           <View className="bg-white h-14 flex-row justify-between px-6 rounded-lg mb-4">
             <Text className="self-center font-medium text-gray-500">
@@ -90,9 +77,8 @@ const HomeScreen = () => {
                 </Text>
               ))}
             </ScrollView>
-            <TouchableOpacity className="bg-primary items-center justify-center py-2 px-4 rounded-lg">
-              <Text className="text-white">Thêm+</Text>
-            </TouchableOpacity>
+
+            <AddFloor />
           </View>
 
           <ScrollView
@@ -110,14 +96,16 @@ const HomeScreen = () => {
                 </View>
                 <View className="flex-row flex-wrap px-4">
                   {item?.tables.map((item) => (
-                    <View className="h-[108px] w-1/3 p-2">
+                    <View key={item.id} className="h-[108px] w-1/3 p-2">
                       <View className="flex-1 bg-white items-center rounded-lg overflow-hidden">
                         <View
                           className={`items-center py-1 ${
                             item.status === true ? "bg-[#8E8E8E]" : "bg-primary"
                           } w-full`}
                         >
-                          <Text className="text-white">{item.name}</Text>
+                          <Text className="text-white uppercase">
+                            {item.name}
+                          </Text>
                         </View>
                         <View className="justify-center items-center flex-1">
                           {item.status === true ? (
@@ -142,6 +130,23 @@ const HomeScreen = () => {
                       </View>
                     </View>
                   ))}
+                  <View className="h-[108px] w-1/3 p-2">
+                    <View
+                      style={{
+                        flex: 1,
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        borderStyle: "dashed",
+                        borderColor: "#2DB894",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        paddingBottom: 8
+                      }}
+                    >
+                      <Feather name="plus" size={24} color="#2DB894" />
+                      <Text className="text-primary font-medium text-xs mt-2">Thêm bàn</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             ))}
