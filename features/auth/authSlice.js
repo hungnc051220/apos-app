@@ -21,6 +21,7 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
       ...response.data,
       token: response.headers.authorization,
     };
+
     AsyncStorage.setItem("user", JSON.stringify(transformResponse));
     return transformResponse;
 

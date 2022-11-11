@@ -66,15 +66,34 @@ const OrderItem = ({ order }) => (
   </View>
 );
 
-const HomeScreen = () => {
+const OrderScreen = () => {
   const user = useSelector((state) => state.auth.user);
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "Apple", value: "apple" },
-    { label: "Banana", value: "banana" },
-  ]);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const getEmployees = async () => {
+      try {
+        const response = await axios.post(
+          "https://mseller-dev.azurewebsites.net/api/employee/list",
+          {},
+          {
+            headers: {
+              authorization: `Bearer ${user?.token}`,
+            },
+          }
+        );
+        const transformResponse = response.data.data.content.map((item) => ({value: item.id, label: item.fullName}))
+        setItems(transformResponse);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getEmployees();
+  }, []);
 
   useEffect(() => {
     const getOrders = async () => {
@@ -107,7 +126,7 @@ const HomeScreen = () => {
       />
       <SafeAreaView className="flex-1">
         <HeaderHome />
-        <View className="flex-1 bg-gray-200 pt-4 pb-[100px]">
+        <View className="flex-1 bg-gray-100 pt-4 pb-[100px]">
           <View className="flex-row justify-between w-full items-center px-6 mb-3">
             <Text className="font-medium">Tất cả đơn hàng</Text>
             <View>
@@ -151,4 +170,4 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default OrderScreen;

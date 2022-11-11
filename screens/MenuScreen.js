@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import AddFloor from "../components/AddFloor";
+import AddFood from "../components/AddFood";
 import Header from "../components/Header";
 import MenuItem from "../components/MenuItem";
 
@@ -56,6 +57,7 @@ const MenuScreen = () => {
       />
       <SafeAreaView className="flex-1">
         <Header />
+        <AddFood />
         <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
           <View className="bg-white -mx-6 py-4 px-6">
             <FlatList
@@ -75,7 +77,8 @@ const MenuScreen = () => {
           </View>
 
           <View className="flex-1 justify-end py-10">
-            <TouchableOpacity
+            <AddFood />
+            {/* <TouchableOpacity
               className="bg-primary py-4 block w-full rounded-lg items-center"
               // onPress={handleLogin}
               // disabled={loading}
@@ -85,7 +88,7 @@ const MenuScreen = () => {
               ) : (
                 <ActivityIndicator size={20} color="#fff" />
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </SafeAreaView>

@@ -52,7 +52,7 @@ const RootNavigation = () => {
           screenOptions={{ headerShown: false }}
           initialRouteName="Login"
         >
-          {!token ? (
+          {token ? (
             <Stack.Screen name="Login" component={SignInScreen} />
           ) : (
             <Stack.Screen name="Root" component={RootScreen} />
