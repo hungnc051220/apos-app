@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 
-const Header = ({ navigation }) => {
+const Header = ({ navigation, text }) => {
   return (
     <View className="flex-row justify-between items-center pb-4 px-6 pt-[35px]">
       <Feather
@@ -10,7 +10,7 @@ const Header = ({ navigation }) => {
         color="#fff"
         onPress={() => navigation.goBack()}
       />
-      <Text className="text-white font-medium text-base">Menu</Text>
+      <Text className="text-white font-medium text-base">{text}</Text>
       <Feather name="home" size={22} color="#fff" />
     </View>
   );

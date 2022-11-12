@@ -63,8 +63,8 @@ const MenuScreen = ({navigation}) => {
         className="absolute inset-0"
       />
       <SafeAreaView className="flex-1">
-        <Header navigation={navigation}/>
-        <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-60">
+        <Header navigation={navigation} text="Menu"/>
+        <View className="flex-1 bg-gray-100 px-6 pt-4 pb-60">
           <View className="pb-4 flex-row justify-between items-center">
             <Text className="text-base font-medium">Món ăn</Text>
             <Feather name="search" size={16} />
