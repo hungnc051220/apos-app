@@ -10,6 +10,7 @@ import Toast, { BaseToast } from "react-native-toast-message";
 import { StyleSheet, Text, View } from "react-native";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import OrderList from "./screens/OrderList";
 
 const Stack = createStackNavigator();
 
@@ -55,29 +56,6 @@ const toastConfig = {
       <Text className="font-bold">{props.text1}</Text>
       <Text>{props.text2}</Text>
     </View>
-    // <BaseToast
-    //   {...props}
-    //   style={{ borderLeftColor: "red" }}
-    //   contentContainerStyle={{
-    //     backgroundColor: "white",
-    //     borderTopRightRadius: 16,
-    //     borderBottomRightRadius: 16,
-    //   }}
-    //   text1Style={{
-    //     fontSize: 14,
-    //     fontWeight: "600",
-    //   }}
-    //   text2Style={{
-    //     fontSize: 14,
-    //     fontWeight: "400",
-    //   }}
-    //   text2NumberOfLines={3}
-    //   renderTrailingIcon={() => (
-    //     <View className="w-16 justify-center items-center">
-    //       <AntDesign name="closecircle" size={24} color="red" />
-    //     </View>
-    //   )}
-    // />
   ),
 };
 
@@ -95,7 +73,10 @@ const RootNavigation = () => {
           {!token ? (
             <Stack.Screen name="Login" component={SignInScreen} />
           ) : (
-            <Stack.Screen name="Root" component={RootScreen} />
+            <>
+              <Stack.Screen name="Root" component={RootScreen} />
+              <Stack.Screen name="OrderList" component={OrderList} />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>

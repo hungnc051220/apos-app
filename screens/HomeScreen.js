@@ -1,10 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   ImageBackground,
   RefreshControl,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
@@ -15,7 +17,7 @@ import AddFloor from "../components/AddFloor";
 import AddTable from "../components/AddTable";
 import HeaderHome from "../components/HeaderHome";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
   const [floors, setFloors] = useState([]);
   const [total, setTotal] = useState({
@@ -167,7 +169,13 @@ const HomeScreen = () => {
                 </View>
                 <View className="flex-row flex-wrap px-4">
                   {item?.tables.map((item) => (
-                    <View key={item.id} className="h-[108px] w-1/3 p-2">
+                    <TouchableOpacity
+                      key={item.id}
+                      className="h-[108px] w-1/3 p-2"
+                      onPress={item.status === false ? () =>
+                        navigation.navigate("OrderList", { name: "ok" }) : undefined
+                      }
+                    >
                       <View className="flex-1 bg-white items-center rounded-lg overflow-hidden">
                         <View
                           className={`items-center py-1 ${
@@ -199,7 +207,7 @@ const HomeScreen = () => {
                           </Text>
                         </View>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   ))}
                   <AddTable floorId={item.id} getFloors={getFloors} />
                 </View>

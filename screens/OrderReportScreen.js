@@ -10,7 +10,7 @@ const OrderReportScreen = () => {
       <View className="px-6 flex-row space-x-3">
         <View className="flex-1 bg-white h-12 rounded-lg justify-center">
           <Text className="text-secondary font-medium pl-4">
-            320.5 <Text className="text-gray-500">triệu</Text>
+            100 <Text className="text-gray-500">đơn</Text>
           </Text>
           <Text className="pl-4 text-xs">Doanh thu</Text>
         </View>
