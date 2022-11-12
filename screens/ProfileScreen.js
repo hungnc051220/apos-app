@@ -28,7 +28,7 @@ const ProfileScreen = () => {
     setRefreshing(true);
     try {
       const response = await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/floor/list",
+        "https://mseller-dev-1.azurewebsites.net/api/floor/list",
         {},
         {
           headers: {

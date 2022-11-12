@@ -1,35 +1,25 @@
 import axios from "axios";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
+  FlatList, ImageBackground, RefreshControl, StatusBar,
+  Text, View
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
 import HeaderHome from "../components/HeaderHome";
-import DropDownPicker from "react-native-dropdown-picker";
-import moment from "moment";
 import { formatMoney } from "../ultis/common";
 
 const OrderItem = ({ order }) => (
   <View className="bg-white mb-4 py-2 px-6 shadow-md space-y-1">
     <View className="flex-row items-center">
       <View className="w-1/2 items-start pr-1">
-      <View className="bg-primary p-1 rounded-md self-start">
-        <Text className="text-white">
-          {order.table.name} - {order.floor.name}
-        </Text>
-      </View>
+        <View className="bg-primary p-1 rounded-md self-start">
+          <Text className="text-white">
+            {order.table.name} - {order.floor.name}
+          </Text>
+        </View>
       </View>
       <View className="w-1/2 items-end pl-1">
         <Text
@@ -44,26 +34,25 @@ const OrderItem = ({ order }) => (
 
     <View className="flex-row">
       <View className="w-1/2 items-start pr-1">
-      <Text>
-        {moment(order.logs[0].actionDatetime).format("HH:mm DD/MM/yyyy")}
-      </Text>
+        <Text>
+          {moment(order.logs[0].actionDatetime).format("HH:mm DD/MM/yyyy")}
+        </Text>
       </View>
       <View className="w-1/2 items-end pl-1">
-      <Text>Nhân viên: {order.logs[0].user.fullName}</Text>
+        <Text>Nhân viên: {order.logs[0].user.fullName}</Text>
       </View>
     </View>
 
     <View className="flex-row items-center">
       <View className="w-1/2 items-start pr-1">
-       <Text className="text-gray-500">5 sản phẩm</Text>
+        <Text className="text-gray-500">5 sản phẩm</Text>
       </View>
       <View className="w-1/2 items-end pl-1">
-      <Text className="font-semibold text-secondary">
-        {formatMoney(order.totalNetPrice)} ₫
-      </Text>
+        <Text className="font-semibold text-secondary">
+          {formatMoney(order.totalNetPrice)} ₫
+        </Text>
       </View>
     </View>
-    
   </View>
 );
 
@@ -79,7 +68,7 @@ const OrderScreen = () => {
     const getEmployees = async () => {
       try {
         const response = await axios.post(
-          "https://mseller-dev.azurewebsites.net/api/employee/list",
+          "https://mseller-dev-1.azurewebsites.net/api/employee/list",
           {},
           {
             headers: {
@@ -87,8 +76,16 @@ const OrderScreen = () => {
             },
           }
         );
-        const transformResponse = response.data.data.content.map((item) => ({value: item.id, label: item.fullName}))
-        setItems(transformResponse);
+        const transformResponse = response.data.data.content.map((item) => ({
+          value: item.id,
+          label: item.fullName,
+        }));
+        const firstItem = [{
+          value: null,
+          label: "Tất cả"
+        }]
+        const list = [...firstItem, ...transformResponse]
+        setItems(list);
       } catch (error) {
         console.log(error);
       }
@@ -100,9 +97,13 @@ const OrderScreen = () => {
   const getOrders = async () => {
     try {
       setRefreshing(true);
+      let body = {};
+      if (value) {
+        body.employeeId = value;
+      }
       const response = await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/order/list",
-        {},
+        "https://mseller-dev-1.azurewebsites.net/api/order/list",
+        body,
         {
           headers: {
             authorization: `Bearer ${user?.token}`,
@@ -118,7 +119,7 @@ const OrderScreen = () => {
 
   useEffect(() => {
     getOrders();
-  }, []);
+  }, [value]);
 
   const onRefresh = React.useCallback(() => {
     getOrders();
@@ -169,7 +170,7 @@ const OrderScreen = () => {
           <FlatList
             data={orders}
             keyExtractor={(x) => x.id}
-            renderItem={({ item }) => <OrderItem order={item}/>}
+            renderItem={({ item }) => <OrderItem order={item} />}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}

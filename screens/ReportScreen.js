@@ -1,26 +1,12 @@
 import axios from "axios";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
+  ImageBackground, View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import AddFloor from "../components/AddFloor";
-import AddFood from "../components/AddFood";
 import Header from "../components/Header";
-import MenuItem from "../components/MenuItem";
 import MyTab from "../navigation/TopBarNavigation";
 
 const ReportScreen = ({navigation}) => {
@@ -32,7 +18,7 @@ const ReportScreen = ({navigation}) => {
     setRefreshing(true);
     try {
       const response = await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/menu/food/list",
+        "https://mseller-dev-1.azurewebsites.net/api/menu/food/list",
         {},
         {
           headers: {
@@ -57,7 +43,7 @@ const ReportScreen = ({navigation}) => {
 
   return (
     <View className="flex-1">
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar style="light" translucent={true}/>
       <ImageBackground
         source={require("../assets/background-login.png")}
         resizeMode="cover"

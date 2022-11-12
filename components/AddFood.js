@@ -61,7 +61,7 @@ const AddFood = () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/menu/food",
+        "https://mseller-dev-1.azurewebsites.net/api/menu/food",
         fd,
         {
           headers: {
@@ -106,7 +106,7 @@ const AddFood = () => {
     const getGroups = async () => {
       try {
         const response = await axios.post(
-          "https://mseller-dev.azurewebsites.net/api/menu/group/list",
+          "https://mseller-dev-1.azurewebsites.net/api/menu/group/list",
           {},
           {
             headers: {

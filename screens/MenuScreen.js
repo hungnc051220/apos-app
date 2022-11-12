@@ -1,23 +1,12 @@
 import axios from "axios";
+import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
+  FlatList, ImageBackground, RefreshControl, Text, View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import AddFloor from "../components/AddFloor";
 import AddFood from "../components/AddFood";
 import Header from "../components/Header";
 import MenuItem from "../components/MenuItem";
@@ -31,7 +20,7 @@ const MenuScreen = ({navigation}) => {
     setRefreshing(true);
     try {
       const response = await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/menu/food/list",
+        "https://mseller-dev-1.azurewebsites.net/api/menu/food/list",
         {},
         {
           headers: {
@@ -56,7 +45,7 @@ const MenuScreen = ({navigation}) => {
 
   return (
     <View className="flex-1">
-      <StatusBar translucent backgroundColor="transparent" />
+      <StatusBar style="light" translucent={true}/>
       <ImageBackground
         source={require("../assets/background-login.png")}
         resizeMode="cover"
@@ -69,7 +58,7 @@ const MenuScreen = ({navigation}) => {
             <Text className="text-base font-medium">Món ăn</Text>
             <Feather name="search" size={16} />
           </View>
-          <View className="bg-white -mx-6 py-4 px-6">
+          <View className="bg-white -mx-6 py-4 px-6 min-h-[100px]">
             <FlatList
               data={foods}
               keyExtractor={(x) => x.id}
@@ -83,6 +72,7 @@ const MenuScreen = ({navigation}) => {
                   />
                 </View>
               )}
+              showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}

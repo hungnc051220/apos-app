@@ -2,9 +2,9 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   ActivityIndicator,
   TextInput,
+  Dimensions,
 } from "react-native";
 import React, { useState } from "react";
 import Modal from "react-native-modal";
@@ -13,23 +13,24 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 
-const AddFloor = ({ getFloors }) => {
+const AddTable = ({ floorId, getFloors }) => {
   const user = useSelector((state) => state.auth.user);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [nameFloor, onChangeNameFloor] = useState(null);
+  const [nameTable, onChangeNameTable] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handleAddFloor = async () => {
+  const handleAddTable = async () => {
     setLoading(true);
     try {
       await axios.post(
-        "https://mseller-dev-1.azurewebsites.net/api/floor",
+        "https://mseller-dev-1.azurewebsites.net/api/table",
         {
-          name: nameFloor,
+          floorId,
+          name: nameTable,
         },
         {
           headers: {
@@ -42,28 +43,36 @@ const AddFloor = ({ getFloors }) => {
       Toast.show({
         type: "success",
         text1: "Thành công",
-        text2: "Tạo tầng mới thành công!",
+        text2: "Tạo bàn mới thành công!",
       });
     } catch (error) {
       setModalVisible(false);
       Toast.show({
         type: "error",
         text1: "Thất bại",
-        text2: "Tạo tầng mới thất bại!",
+        text2: "Tạo bàn mới thất bại!",
       });
     }
     setLoading(false);
   };
-
   return (
-    <View className="mt-4">
+    <View className="h-[108px] w-1/3 p-2">
       <TouchableOpacity
-        className="bg-primary items-center justify-center py-2 px-4 rounded-lg"
         onPress={toggleModal}
+        style={{
+          flex: 1,
+          borderWidth: 1,
+          borderRadius: 8,
+          borderStyle: "dashed",
+          borderColor: "#2DB894",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          paddingBottom: 8,
+        }}
       >
-        <Text className="text-white">Thêm+</Text>
+        <Feather name="plus" size={24} color="#2DB894" />
+        <Text className="text-primary font-medium text-xs mt-2">Thêm bàn</Text>
       </TouchableOpacity>
-
       <Modal
         isVisible={isModalVisible}
         backdropOpacity={0.5}
@@ -76,20 +85,20 @@ const AddFloor = ({ getFloors }) => {
               <Feather name="x" size={24} onPress={toggleModal} />
             </View>
             <View>
-              <Text className="mb-3 font-medium">Tên tầng</Text>
+              <Text className="mb-3 font-medium">Tên bàn</Text>
               <TextInput
-                placeholder="Tên tầng"
+                placeholder="Tên bàn"
                 className="w-full block border border-gray-200 h-12 px-4 mb-6 rounded-lg"
-                onChangeText={onChangeNameFloor}
+                onChangeText={onChangeNameTable}
               />
               <TouchableOpacity
                 className="bg-primary py-4 mb-4 block w-full rounded-lg items-center"
-                onPress={handleAddFloor}
+                onPress={handleAddTable}
                 disabled={loading}
               >
                 {!loading ? (
                   <Text className="text-white text-sm font-medium">
-                    Tạo tầng
+                    Tạo bàn
                   </Text>
                 ) : (
                   <ActivityIndicator size={20} color="#fff" />
@@ -103,4 +112,4 @@ const AddFloor = ({ getFloors }) => {
   );
 };
 
-export default AddFloor;
+export default AddTable;

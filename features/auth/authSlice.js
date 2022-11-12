@@ -13,8 +13,13 @@ const initialState = {
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {
     const response = await axios.post(
-      "https://mseller-dev.azurewebsites.net/api/auth/login",
-      user
+      "https://mseller-dev-1.azurewebsites.net/api/auth/login",
+      user,
+      {
+        headers: {
+          "Accept-Language": "vi",
+        },
+      }
     );
 
     let transformResponse = {
@@ -24,10 +29,9 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
 
     AsyncStorage.setItem("user", JSON.stringify(transformResponse));
     return transformResponse;
-
   } catch (error) {
     const message =
-      (error.response && error.response.data && error.response.data.message) ||
+      (error.response && error.response.data && error.response.data.title) ||
       error.message ||
       error.toString();
     return thunkAPI.rejectWithValue(message);
