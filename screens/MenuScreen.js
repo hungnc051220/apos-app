@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  RefreshControl,
   ScrollView,
   StatusBar,
   Text,
@@ -21,29 +22,35 @@ import AddFood from "../components/AddFood";
 import Header from "../components/Header";
 import MenuItem from "../components/MenuItem";
 
-const MenuScreen = () => {
+const MenuScreen = ({navigation}) => {
   const user = useSelector((state) => state.auth.user);
-  const [loading, setLoading] = useState(false);
   const [foods, setFoods] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
+  const getFoods = async () => {
+    setRefreshing(true);
+    try {
+      const response = await axios.post(
+        "https://mseller-dev.azurewebsites.net/api/menu/food/list",
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
+      setFoods(response.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
+    setRefreshing(false);
+  };
+  
   useEffect(() => {
-    const getFoods = async () => {
-      try {
-        const response = await axios.post(
-          "https://mseller-dev.azurewebsites.net/api/menu/food/list",
-          {},
-          {
-            headers: {
-              authorization: `Bearer ${user?.token}`,
-            },
-          }
-        );
-        setFoods(response.data?.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    getFoods();
+  }, []);
 
+  const onRefresh = React.useCallback(() => {
     getFoods();
   }, []);
 
@@ -56,9 +63,12 @@ const MenuScreen = () => {
         className="absolute inset-0"
       />
       <SafeAreaView className="flex-1">
-        <Header />
-        <AddFood />
-        <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
+        <Header navigation={navigation}/>
+        <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-60">
+          <View className="pb-4 flex-row justify-between items-center">
+            <Text className="text-base font-medium">Món ăn</Text>
+            <Feather name="search" size={16} />
+          </View>
           <View className="bg-white -mx-6 py-4 px-6">
             <FlatList
               data={foods}
@@ -73,22 +83,19 @@ const MenuScreen = () => {
                   />
                 </View>
               )}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={["#2DB894"]}
+                  tintColor="#2DB894"
+                />
+              }
             />
           </View>
 
-          <View className="flex-1 justify-end py-10">
+          <View>
             <AddFood />
-            {/* <TouchableOpacity
-              className="bg-primary py-4 block w-full rounded-lg items-center"
-              // onPress={handleLogin}
-              // disabled={loading}
-            >
-              {!loading ? (
-                <Text className="text-white text-sm font-medium">Thêm món</Text>
-              ) : (
-                <ActivityIndicator size={20} color="#fff" />
-              )}
-            </TouchableOpacity> */}
           </View>
         </View>
       </SafeAreaView>

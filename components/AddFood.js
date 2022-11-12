@@ -21,11 +21,9 @@ const AddFood = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    quantity: 100,
-    price: 0,
-  });
+
+  const [name, onChangeName] = useState("");
+  const [price, onChangePrice] = useState(0);
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -33,6 +31,61 @@ const AddFood = () => {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const handleAddFood = async () => {
+    const data = {
+      name,
+      price: Number(price),
+      groupId: "63686ff1dab7d83a0de560f8",
+      quantity: 10,
+    };
+
+    const json = JSON.stringify(data);
+    const blob = new Blob([json], {
+      type: "application/json",
+    });
+
+    let localUri = image.uri;
+    let filename = localUri.split("/").pop();
+
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+
+    const imageToUpload = { uri: localUri, name: filename, type };
+
+    let fd = new FormData();
+    fd.append("body", blob);
+    fd.append("image", imageToUpload);
+
+    setLoading(true);
+    try {
+      await axios.post(
+        "https://mseller-dev.azurewebsites.net/api/menu/food",
+        fd,
+        {
+          headers: {
+            Accept: "application/json",
+            authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwOTQyMzQ5ODk0Iiwicm9sZXMiOlsiUk9MRV9CUkFOQ0giXSwiaWF0IjoxNjY4MTgxODk4LCJleHAiOjE2NjgxODU0OTh9.ifz12yMC6Xj6hbYHdm7WRtoV3ETz28ySUMND6p65uPk`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      Toast.show({
+        type: "success",
+        text1: "Thành công",
+        text2: "Tạo món ăn thành công!",
+      });
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Thất bại",
+        text2: "Tạo món ăn thất bại!",
+      });
+    }
+    setLoading(false);
+    // setModalVisible(false);
   };
 
   const pickImage = async () => {
@@ -43,6 +96,7 @@ const AddFood = () => {
       quality: 1,
     });
 
+    console.log(result);
     if (!result.cancelled) {
       setImage(result);
     }
@@ -73,89 +127,6 @@ const AddFood = () => {
     getGroups();
   }, []);
 
-  // const handleAddFood = async () => {
-  //   const data = {
-  //     ...formData,
-  //     groupId: value,
-  //   };
-
-  //   const json = JSON.stringify(data);
-  //   const blob = new Blob([json], {
-  //     type: "application/json",
-  //   });
-
-  //   const formData = new FormData();
-  //   formData.append("body", blob);
-  //   formData.append("image", image);
-
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.post(
-  //       "https://mseller-dev.azurewebsites.net/api/menu/food",
-  //       formData,
-  //       {
-  //         headers: {
-  //           Accept: "application/json",
-  //           authorization: `Bearer ${user?.token}`,
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //       }
-  //     );
-  //     console.log(response.data);
-  //     Toast.show({
-  //       type: "success",
-  //       text1: "Thành công",
-  //       text2: "Tạo món ăn thành công!",
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Thất bại",
-  //       text2: "Tạo món ăn thất bại!",
-  //     });
-  //   }
-  //   setLoading(false);
-  //   setModalVisible(false);
-  // };
-
-  const handleAddFood = async () => {
-    const data = {
-      name: "Thắng chicken 97",
-      groupId: "63686ff1dab7d83a0de560f8",
-      quantity: 10,
-      price: 10,
-    };
-
-    const json = JSON.stringify(data);
-    const blob = new Blob([json], {
-      type: "application/json",
-    });
-
-    console.log(image);
-
-    const formData = new FormData();
-    formData.append("body", blob);
-    formData.append("image", image);
-
-    //setLoading(true);
-    try {
-      const response = await axios.post(
-        "https://mseller-dev.azurewebsites.net/api/menu/food",
-        formData,
-        {
-          headers: {
-            'Accept': 'application/json',
-            authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwOTQyMzQ5ODk0Iiwicm9sZXMiOlsiUk9MRV9CUkFOQ0giXSwiaWF0IjoxNjY4MTYzMTY0LCJleHAiOjE2NjgxNjY3NjR9.ru9Pi5O3Qx-cfK1P_8PF_soE2UuoXo9XEH_A76nLUWE`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <View className="mt-4">
@@ -234,9 +205,7 @@ const AddFood = () => {
               <TextInput
                 placeholder="Tên món"
                 className="w-full block border border-gray-200 h-12 px-4 mb-4 rounded-lg"
-                onChangeText={(text) =>
-                  setFormData({ ...formData, name: text })
-                }
+                onChangeText={onChangeName}
               />
               <Text className="mb-3 font-medium">
                 Giá tiền <Text className="text-red-500">*</Text>
@@ -245,9 +214,7 @@ const AddFood = () => {
                 placeholder="Giá tiền"
                 keyboardType="number-pad"
                 className="w-full block border border-gray-200 h-12 px-4 mb-12 rounded-lg"
-                onChangeText={(text) =>
-                  setFormData({ ...formData, price: Number(text) })
-                }
+                onChangeText={onChangePrice}
               />
               <TouchableOpacity
                 className="bg-primary py-4 block w-full rounded-lg items-center"

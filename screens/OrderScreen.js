@@ -6,6 +6,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  RefreshControl,
   ScrollView,
   StatusBar,
   Text,
@@ -72,6 +73,7 @@ const OrderScreen = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const getEmployees = async () => {
@@ -95,24 +97,30 @@ const OrderScreen = () => {
     getEmployees();
   }, []);
 
-  useEffect(() => {
-    const getOrders = async () => {
-      try {
-        const response = await axios.post(
-          "https://mseller-dev.azurewebsites.net/api/order/list",
-          {},
-          {
-            headers: {
-              authorization: `Bearer ${user?.token}`,
-            },
-          }
-        );
-        setOrders(response.data.data.content);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const getOrders = async () => {
+    try {
+      setRefreshing(true);
+      const response = await axios.post(
+        "https://mseller-dev.azurewebsites.net/api/order/list",
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${user?.token}`,
+          },
+        }
+      );
+      setOrders(response.data.data.content);
+    } catch (error) {
+      console.log(error);
+    }
+    setRefreshing(false);
+  };
 
+  useEffect(() => {
+    getOrders();
+  }, []);
+
+  const onRefresh = React.useCallback(() => {
     getOrders();
   }, []);
 
@@ -161,8 +169,15 @@ const OrderScreen = () => {
           <FlatList
             data={orders}
             keyExtractor={(x) => x.id}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <OrderItem order={item} />}
+            renderItem={({ item }) => <OrderItem order={item}/>}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#2DB894"]}
+                tintColor="#2DB894"
+              />
+            }
           />
         </View>
       </SafeAreaView>
