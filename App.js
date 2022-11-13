@@ -40,21 +40,12 @@ const toastConfig = {
     />
   ),
   error: (props) => (
-    <View
-      className="bg-white w-4/5 my-2 py-2 px-3 rounded-lg shadow-lg"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 10,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.5,
-        elevation: 5,
-      }}
-    >
-      <Text className="font-bold">{props.text1}</Text>
-      <Text>{props.text2}</Text>
+    <View className="bg-white w-4/5 my-2 py-2 px-3 rounded-lg flex-row">
+      <View className="bg-red-500 w-2 h-full"></View>
+      <View>
+        <Text className="font-bold">{props.text1}</Text>
+        <Text className="text-xs">{props.text2}</Text>
+      </View>
     </View>
   ),
 };

@@ -16,6 +16,9 @@ import { useSelector } from "react-redux";
 import AddFloor from "../components/AddFloor";
 import AddTable from "../components/AddTable";
 import HeaderHome from "../components/HeaderHome";
+import EditFloor from "../components/EditFloor";
+import Toast from 'react-native-toast-message';
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 const HomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
@@ -104,6 +107,9 @@ const HomeScreen = ({ navigation }) => {
       />
       <SafeAreaView className="flex-1">
         <HeaderHome />
+        <Button title="Press" onPress={() => Toast.show({type: "error",
+        text1: "Thất bại", text2: "Bàn đã tồn tại!"})}>
+          </Button>
         <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
           <View className="bg-white h-14 flex-row justify-between px-6 rounded-lg mb-4">
             <Text className="self-center font-medium text-gray-500">
@@ -168,26 +174,36 @@ const HomeScreen = ({ navigation }) => {
                   </Text>
                 </View>
                 <View className="flex-row flex-wrap px-4">
-                  {item?.tables.map((item) => (
-                    <TouchableOpacity
-                      key={item.id}
-                      className="h-[108px] w-1/3 p-2"
-                      onPress={item.status === false ? () =>
-                        navigation.navigate("OrderList", { name: "ok" }) : undefined
-                      }
-                    >
+                  {item?.tables.map((table) => (
+                    <View key={table.id} className="h-[108px] w-1/3 p-2">
                       <View className="flex-1 bg-white items-center rounded-lg overflow-hidden">
                         <View
-                          className={`items-center py-1 ${
-                            item.status === true ? "bg-[#8E8E8E]" : "bg-primary"
+                          className={`flex-row items-center justify-between ${
+                            table.status === true ? "bg-[#8E8E8E]" : "bg-primary"
                           } w-full`}
                         >
-                          <Text className="text-white uppercase">
-                            {item.name}
+                          <View className="w-5"></View>
+                          <Text className="text-white uppercase flex-1 text-center py-1">
+                            {table.name}
                           </Text>
+                          {table.status === true ? (
+                            <View className="w-4"></View>
+                          ) : (
+                            <EditFloor floorId={item.id} tableId={table.id} tableName={table.name} floors={floorLables} getFloors={getFloors} />
+                          )}
                         </View>
-                        <View className="justify-center items-center flex-1">
-                          {item.status === true ? (
+                        <TouchableOpacity
+                          className="justify-center items-center flex-1"
+                          onPress={
+                            table.status === false
+                              ? () =>
+                                  navigation.navigate("OrderList", {
+                                    name: "ok",
+                                  })
+                              : undefined
+                          }
+                        >
+                          {table.status === true ? (
                             <Feather name="clock" size={24} color="#8E8E8E" />
                           ) : (
                             <Feather
@@ -198,16 +214,16 @@ const HomeScreen = ({ navigation }) => {
                           )}
                           <Text
                             className={`mt-2 ${
-                              item.status === true
+                              table.status === true
                                 ? "text-[#8E8E8E]"
                                 : "text-primary"
                             } font-medium text-xs`}
                           >
-                            {item.status === true ? "Đang sử dụng" : "Sẵn sàng"}
+                            {table.status === true ? "Đang sử dụng" : "Sẵn sàng"}
                           </Text>
-                        </View>
+                        </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
+                    </View>
                   ))}
                   <AddTable floorId={item.id} getFloors={getFloors} />
                 </View>

@@ -50,7 +50,7 @@ const ReportScreen = ({navigation}) => {
         className="absolute inset-0"
       />
       <SafeAreaView className="flex-1">
-        <Header navigation={navigation} text="Report"/>
+        <Header navigation={navigation} text="Báo cáo"/>
         <MyTab />
       </SafeAreaView>
     </View>

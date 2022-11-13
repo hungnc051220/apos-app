@@ -15,6 +15,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Toast from "react-native-toast-message";
 import MenuItem from "./MenuItem";
+import { useDispatch } from "react-redux";
 
 const CreateOrder = ({ getFloors }) => {
   const user = useSelector((state) => state.auth.user);
@@ -103,7 +104,7 @@ const CreateOrder = ({ getFloors }) => {
       >
         <View className="flex-1 -mx-5 -mb-5 justify-end">
           <View className="bg-white rounded-t-[32px] overflow-hidden p-6 pt-3 h-[85%]">
-            <View className="justify-between items-center flex-row mb-4">
+            <View className="justify-between items-center flex-row mb-4 ">
               <View></View>
               <Text className="font-semibold ml-8 text-base">Thêm món</Text>
               <TouchableOpacity
