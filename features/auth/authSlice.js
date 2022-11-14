@@ -38,6 +38,29 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   }
 });
 
+export const logout = createAsyncThunk("auth/logout", async (user, thunkAPI) => {
+  const { token } = thunkAPI.getState().auth.user;
+  try {
+    await axios.get(
+      "https://mseller-dev-1.azurewebsites.net/api/auth/logout",
+      {
+        headers: {
+          "Accept-Language": "vi",
+          authorization: `Bearer ${token}`
+        },
+      }
+    );
+    await AsyncStorage.removeItem("user");
+    return true;
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.title) ||
+      error.message ||
+      error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -46,9 +69,6 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isError = false;
       state.message = "";
-    },
-    logout: (state) => {
-      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -65,9 +85,22 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+      })
+      .addCase(logout.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.user = null;
       });
   },
 });
 
-export const { reset, logout } = authSlice.actions;
+export const { reset } = authSlice.actions;
 export default authSlice.reducer;

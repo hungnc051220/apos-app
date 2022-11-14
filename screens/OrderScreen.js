@@ -2,17 +2,26 @@ import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import {
-  FlatList, ImageBackground, RefreshControl, StatusBar,
-  Text, View
+  FlatList,
+  ImageBackground,
+  RefreshControl,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import HeaderHome from "../components/HeaderHome";
+import { listStatus } from "../constants/status";
 import { formatMoney } from "../ultis/common";
 
-const OrderItem = ({ order }) => (
-  <View className="bg-white mb-4 py-2 px-6 shadow-md space-y-1">
+const OrderItem = ({ order, navigation }) => (
+  <TouchableOpacity
+    className="bg-white mb-4 py-2 px-6 shadow-md space-y-1"
+    onPress={() => navigation.navigate("OrderDetail", { orderId: order.id })}
+  >
     <View className="flex-row items-center">
       <View className="w-1/2 items-start pr-1">
         <View className="bg-primary p-1 rounded-md self-start">
@@ -22,12 +31,8 @@ const OrderItem = ({ order }) => (
         </View>
       </View>
       <View className="w-1/2 items-end pl-1">
-        <Text
-          className={`${
-            order.status === "CANCELLED" ? "text-red-500" : "text-primary"
-          } `}
-        >
-          {order.status === "CANCELLED" ? "Đã hủy" : "Đã thanh toán"}
+        <Text className={listStatus[order?.status]?.color}>
+          {listStatus[order?.status]?.label}
         </Text>
       </View>
     </View>
@@ -45,7 +50,7 @@ const OrderItem = ({ order }) => (
 
     <View className="flex-row items-center">
       <View className="w-1/2 items-start pr-1">
-        <Text className="text-gray-500">5 sản phẩm</Text>
+        <Text className="text-gray-500">{order?.foods.reduce((sum, item) => sum + item.quantity, 0)} sản phẩm</Text>
       </View>
       <View className="w-1/2 items-end pl-1">
         <Text className="font-semibold text-secondary">
@@ -53,10 +58,10 @@ const OrderItem = ({ order }) => (
         </Text>
       </View>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
-const OrderScreen = () => {
+const OrderScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(false);
@@ -80,11 +85,13 @@ const OrderScreen = () => {
           value: item.id,
           label: item.fullName,
         }));
-        const firstItem = [{
-          value: null,
-          label: "Tất cả"
-        }]
-        const list = [...firstItem, ...transformResponse]
+        const firstItem = [
+          {
+            value: null,
+            label: "Tất cả",
+          },
+        ];
+        const list = [...firstItem, ...transformResponse];
         setItems(list);
       } catch (error) {
         console.log(error);
@@ -170,7 +177,9 @@ const OrderScreen = () => {
           <FlatList
             data={orders}
             keyExtractor={(x) => x.id}
-            renderItem={({ item }) => <OrderItem order={item} />}
+            renderItem={({ item }) => (
+              <OrderItem order={item} navigation={navigation} />
+            )}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}

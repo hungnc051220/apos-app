@@ -107,9 +107,9 @@ const HomeScreen = ({ navigation }) => {
       />
       <SafeAreaView className="flex-1">
         <HeaderHome />
-        <Button title="Press" onPress={() => Toast.show({type: "error",
-        text1: "Thất bại", text2: "Bàn đã tồn tại!"})}>
-          </Button>
+        {/* <Button title="Press" onPress={() => Toast.show({type: "success",
+        text1: "Lỗi", text2: "Bàn đã tồn tại!"})}>
+          </Button> */}
         <View className="flex-1 bg-[#EEEDED] px-6 pt-4 pb-[100px]">
           <View className="bg-white h-14 flex-row justify-between px-6 rounded-lg mb-4">
             <Text className="self-center font-medium text-gray-500">

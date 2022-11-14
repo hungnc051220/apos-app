@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,8 +18,11 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useSelector } from "react-redux";
 import AddFloor from "../components/AddFloor";
 import HeaderHome from "../components/HeaderHome";
+import { logout } from "../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const [floors, setFloors] = useState({});
 
@@ -100,19 +104,20 @@ const ProfileScreen = () => {
           </View>
 
           <View className="bg-white py-3 px-6 -mx-6 space-y-6 mt-3">
-            <View className="flex-row items-center">
-              <Feather name="credit-card" size={16} color="#2DB894" />
+            <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("BankAccount")}>
+            <Feather name="credit-card" size={16} color="#2DB894" />
               <Text className="font-medium ml-3">Tài khoản/ Ngân hàng</Text>
-            </View>
-            <View className="flex-row items-center">
-              <Feather name="settings" size={16} color="#2DB894" />
-              <Text className="font-medium ml-3">Cài đặt cửa hàng</Text>
-            </View>
+            </TouchableOpacity>
 
-            <View className="flex-row items-center">
+            <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("Stores")}>
+            <Feather name="settings" size={16} color="#2DB894" />
+              <Text className="font-medium ml-3">Cài đặt cửa hàng</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity className="flex-row items-center" onPress={() => navigation.navigate("Employees")}>
               <MaterialIcons name="group" size={16} color="#2DB894" />
               <Text className="font-medium ml-3">Danh sách nhân viên</Text>
-            </View>
+            </TouchableOpacity>
 
             <View className="flex-row items-center">
               <MaterialIcons name="security" size={16} color="#2DB894" />
@@ -121,10 +126,10 @@ const ProfileScreen = () => {
           </View>
 
           <View className="bg-white py-3 px-6 -mx-6 space-y-6 mt-3">
-            <View className="flex-row items-center">
+            <TouchableOpacity className="flex-row items-center" onPress={() => dispatch(logout())}>
               <Feather name="log-out" size={16} color="#2DB894" />
               <Text className="font-medium ml-3">Đăng xuất</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
